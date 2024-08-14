@@ -1,21 +1,38 @@
 import React from 'react';
-import CartItem from '../components/CartItem';
 
-const CartPage = () => {
-  const cartItems = [
-    { id: 1, name: 'Product 1', price: 99.99, image: '/path/to/image1.jpg', quantity: 1 },
-    { id: 2, name: 'Product 2', price: 149.99, image: '/path/to/image2.jpg', quantity: 2 },
-  ];
+const CartPage = ({ cartItems }) => {
+  const totalAmount = cartItems.reduce((total, item) => total + item.price, 0);
 
   return (
-    <div className="cart-page">
-      {cartItems.map((item) => (
-        <CartItem key={item.id} item={item} />
-      ))}
-      <div className="cart-total">
-        <h4>Total: ${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</h4>
-        <button className="btn">Proceed to Checkout</button>
-      </div>
+    <div className="container mt-5">
+      <h2 className="text-center">Your Shopping Cart</h2>
+      {cartItems.length === 0 ? (
+        <p className="text-center">Your cart is empty.</p>
+      ) : (
+        <div className="row">
+          <div className="col-md-8">
+            <ul className="list-group">
+              {cartItems.map((item, index) => (
+                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5>{item.name}</h5>
+                    <p className="mb-1">${item.price.toFixed(2)}</p>
+                  </div>
+                  <img src={item.imageUrl} alt={item.name} style={{ width: '50px' }} />
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="col-md-4">
+            <div className="card">
+              <div className="card-body">
+                <h4>Total: ${totalAmount.toFixed(2)}</h4>
+                <button className="btn btn-primary btn-block">Proceed to Checkout</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

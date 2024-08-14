@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { registerUser } from '../services/api';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../firebase';
 
-const SignUpPage = () => {
+const SignUpPage = ({ setUser }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -9,53 +10,76 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await registerUser({ name, email, password });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Update the display name
+      await updateProfile(user, {
+        displayName: name,
+      });
+
+      setUser({ email: user.email, name: user.displayName });
+
       alert('Registration successful');
-      localStorage.setItem('token', response.data.token);
       window.location.href = '/';
     } catch (error) {
-      alert('Registration failed');
+      alert('Registration failed: ' + error.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form">
-      <h2>Sign Up</h2>
-      <div>
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+    <div className="container">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card mt-5">
+            <div className="card-header text-center bg-success text-white">
+              <h3>Sign Up</h3>
+            </div>
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email address</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn btn-success btn-block">Sign Up</button>
+              </form>
+            </div>
+            <div className="card-footer text-center">
+              <p>Already have an account? <a href="/login">Login here</a></p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit" className="btn">Sign Up</button>
-    </form>
+    </div>
   );
 };
 

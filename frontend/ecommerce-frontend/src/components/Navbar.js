@@ -1,10 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
-const Navbar = () => {
+const Navbar = ({ user, setUser, cartItems }) => {  // Accept cartItems as a prop
+  const navigate = useNavigate();
+
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    alert('Logged out successfully');
+    signOut(auth).then(() => {
+      setUser(null);
+      alert('Logged out successfully');
+      navigate('/');
+    }).catch((error) => {
+      alert('Logout failed: ' + error.message);
+    });
   };
 
   return (
@@ -16,12 +25,19 @@ const Navbar = () => {
             <Link to="/" className="nav-link">Home</Link>
           </li>
           <li className="nav-item">
-            <Link to="/cart" className="nav-link">Cart</Link>
+            <Link to="/cart" className="nav-link">
+              Cart
+              {cartItems.length > 0 && (
+                <span className="badge badge-pill badge-primary ml-2">
+                  {cartItems.length}
+                </span>
+              )}
+            </Link>
           </li>
-          {localStorage.getItem('token') ? (
+          {user ? (
             <>
               <li className="nav-item">
-                <Link to="/profile" className="nav-link">Profile</Link>
+                <span className="nav-link">Welcome, {user.name}</span>
               </li>
               <li className="nav-item">
                 <button onClick={handleLogout} className="nav-link btn">Logout</button>
