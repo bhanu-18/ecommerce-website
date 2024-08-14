@@ -3,21 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
-const Navbar = ({ user, setUser, cartItems }) => {  // Accept cartItems as a prop
+const Navbar = ({ user, setUser, cartItems }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    signOut(auth).then(() => {
-      setUser(null);
-      alert('Logged out successfully');
-      navigate('/');
-    }).catch((error) => {
-      alert('Logout failed: ' + error.message);
-    });
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        alert('Logged out successfully');
+        navigate('/');
+      })
+      .catch((error) => {
+        alert('Logout failed: ' + error.message);
+      });
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg">
       <Link to="/" className="navbar-brand">E-Commerce</Link>
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav ml-auto">
@@ -28,7 +30,7 @@ const Navbar = ({ user, setUser, cartItems }) => {  // Accept cartItems as a pro
             <Link to="/cart" className="nav-link">
               Cart
               {cartItems.length > 0 && (
-                <span className="badge badge-pill badge-primary ml-2">
+                <span className="badge badge-pill badge-light ml-2">
                   {cartItems.length}
                 </span>
               )}
@@ -40,7 +42,7 @@ const Navbar = ({ user, setUser, cartItems }) => {  // Accept cartItems as a pro
                 <span className="nav-link">Welcome, {user.name}</span>
               </li>
               <li className="nav-item">
-                <button onClick={handleLogout} className="nav-link btn">Logout</button>
+                <button onClick={handleLogout} className="nav-link">Logout</button>
               </li>
             </>
           ) : (

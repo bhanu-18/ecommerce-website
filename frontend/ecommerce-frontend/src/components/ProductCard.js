@@ -3,7 +3,9 @@ import React from 'react';
 const ProductCard = ({ product, addToCart }) => {
   return (
     <div className="card h-100 shadow-sm">
-      <img src={product.imageUrl} className="card-img-top" alt={product.name} />
+      <div className="card-img-container">
+        <img src={product.imageUrl} className="card-img-top" alt={product.name} />
+      </div>
       <div className="card-body d-flex flex-column">
         <h5 className="card-title">{product.name}</h5>
         <p className="card-text">${product.price.toFixed(2)}</p>
