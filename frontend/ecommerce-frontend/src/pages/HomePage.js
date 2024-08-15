@@ -9,12 +9,11 @@ import { Collapse } from 'react-bootstrap';
 const HomePage = ({ addToCart }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [open, setOpen] = useState(false);
-  const categorySectionRef = useRef(null); // Reference to the category section
-  const productSectionRef = useRef(null);  // Reference to the product section
+  const categorySectionRef = useRef(null);
+  const productSectionRef = useRef(null);
 
-  const filteredProducts = selectedCategory
-    ? productsData[selectedCategory.toLowerCase()]
-    : [];
+  // Ensure the category exists in productsData, otherwise fallback to an empty array
+  const filteredProducts = productsData[selectedCategory] || [];
 
   const CustomPrevArrow = (props) => {
     const { className, onClick } = props;
@@ -75,14 +74,16 @@ const HomePage = ({ addToCart }) => {
 
   const handleCategoryClick = (category) => {
     if (category === selectedCategory) {
-      setOpen(!open); // Toggle dropdown if the same category is clicked
+      setOpen(!open);
     } else {
       setSelectedCategory(category);
-      setOpen(true); // Open dropdown if a new category is clicked
+      setOpen(true);
     }
     setTimeout(() => {
-      productSectionRef.current.scrollIntoView({ behavior: 'smooth' });
-    }, 300); // Delay to allow the collapse to start
+      if (productSectionRef.current) {
+        productSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 300);
   };
 
   return (
@@ -103,38 +104,35 @@ const HomePage = ({ addToCart }) => {
       </motion.header>
 
       <motion.section 
-        ref={categorySectionRef} // Reference to this section for scrolling
+        ref={categorySectionRef}
         className="categories mt-5"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
       >
         <h2 className="text-center">Shop by Category</h2>
-        <div className="category-list d-flex justify-content-center mt-4">
-          <button 
-            className={`category-item btn btn-outline-primary mx-3 ${selectedCategory === 'Electronics' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('Electronics')}
-          >
-            <h3>Electronics</h3>
-          </button>
-          <button 
-            className={`category-item btn btn-outline-primary mx-3 ${selectedCategory === 'Clothing' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('Clothing')}
-          >
-            <h3>Clothing</h3>
-          </button>
+        <div className="category-list d-flex justify-content-center flex-wrap mt-4">
+          {Object.keys(productsData).map((category) => (
+            <button 
+              key={category}
+              className={`category-item btn btn-outline-primary mx-3 ${selectedCategory === category ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(category)}
+            >
+              <h3>{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
+            </button>
+          ))}
         </div>
       </motion.section>
 
       <Collapse in={open}>
         <motion.section 
-          ref={productSectionRef} // Reference to this section for scrolling after selecting a category
+          ref={productSectionRef}
           className="featured-products mt-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
         >
-          <h2 className="text-center">{selectedCategory} Products</h2>
+          <h2 className="text-center">{selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products</h2>
           <Slider {...settings} className="mt-4">
             {filteredProducts.map((product) => (
               <div key={product.id} className="p-2">

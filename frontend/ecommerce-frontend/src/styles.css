@@ -135,6 +135,7 @@ body {
   background-color: #f8f9fa;
   border: 2px solid #0072ff;
   transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+  margin: 10px; /* Added margin to space out buttons */
 }
 
 .category-item:hover {
@@ -146,6 +147,7 @@ body {
 .category-list {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap; /* Allow categories to wrap to the next line */
 }
 
 /* Featured Products Section */
